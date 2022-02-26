@@ -1,71 +1,86 @@
 ---
 title: "A3: Incarceration"
+author : "Margaret Balfrey"
 output: html_document
 ---
 
 ### Introduction
 
+For this assignment we are looking at different data relating to incarceration numbers from 1970 to 2018. We are presented with each county and the amount of people in the population, incarcerated, their gender, race, and other factors. I looked at and compared different variables in the data to find patterns. I on different rates of different races being incarcerated and compared it to the total. 
+
 An introduction of the problem domain and a description of the variable(s) you are choosing to analyze (and why!)
 
 ### Summary Information
 
-Write a summary paragraph of findings that includes the 5 values calculated from your summary information R script
+The five values I calculated in my summary was the highest incarcerations in a single county which I found to be 23,476.19 people incarcerated. I also looked for the highest and lowest amount of incarcerated based on the state. The highest in one state was 76,339 and there were five states that did not have any incarcerated people. I also calculated the mean and median amount of people incarcerated at a time. The average amount of people incarcerated was 161.12 and the median was 32.03. 
 
-These will likely be calculated using your DPLYR skills, answering questions such as: 
-
-- What is the average value of my variable across all the counties (in the current year)?
-- Where is my variable the highest / lowest?
-- How much has my variable change over the last N years?
-
-Feel free to calculate and report values that you find relevant. Again, remember that the purpose is to think about how these measure of incarceration vary by race.
 
 ### The Dataset
 
-Who collected the data?  
-How was the data collected or generated?  
-Why was the data collected?  
-How many observations (rows) are in your data?  
-How many features (columns) are in the data?  
-What, if any, ethical questions or questions of power do you need to consider when working with this data?  
-What are possible limitations or problems with this data?   (at least 200 words)
+The data was collected by the Vera Institute of Justice. This data was collected in order to bring attention to and and end the criminilization of people of color, immigrants, and those in poverty. The data was collected by the U.S. Department of Justice Bureau of Justice Statistics and supplemented from data on the state level. There is also data relatingt o total population that was collected from the CDC and the U.S. Census Bureau. There are about 153,811 observations and 121 features in this dataset. One question I have for how this data is about how it is being used and shared. Without sufficient context this data could be misinterpreted and shared to further worsen the situation for people of these minorities. One of the limitations of this data is that it does not give any information for why people were incarcerated or how long they were. This would provide more of an understanding of the range of imprisonment. Without an understanding of the goals of the Vera Institute this data could be interpreted incorrectly to highlight the number of people in these minorities in jail. This could be a problem if they used it as evidence that they are "dangerous" to society. 
+
 
 
 ### Trends Over Time Chart
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
+For this chart I compared the total population in jail to the population of each race in jail. I found that native was consistently the lowest population in jail. Through most years white was the highest race in jail but there was a period between 1990 and 2000 that black was higher. 
 
-The first chart that you will create and include will show the trend over time of your variable/topic. Think carefully about what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
 
-- Show more than one, but fewer than ~10 trends
-  - This may mean showing the same measure for different locations or different racial groups. Think carefully about a meaningful comparison of locations (e.g., the top 10 counties in a state, top 10 states, etc.)
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- You need a legend for your different line colors and a clear legend title
-
-When we say "clear" or "human readable" titles and labels, that means that you should not just display the variable name.
-
-Here's an example of how to run an R script inside an RMarkdown file:
 
 ``````{r, echo = FALSE, code = readLines("chart1_example.R")}
+library(ggplot2)
+ggplot(data = incarceration_time_series, mapping = aes(x = year, y = value, color = Category)) + 
+  geom_point() + geom_line() + xlim(1985, 2018) + 
+  scale_color_brewer(palette = "Set3", labels = c("aapi_jail_pop" = "AAPI" , 
+                                                   "black_jail_pop" = "Black",
+                                                "latinx_jail_pop" = "Latin",
+                                            "native_jail_pop" = "Native",
+                                       "white_jail_pop" = "White", 
+                                       "other_race_jail_pop" = "Other",
+                                   "total_jail_pop" = "Total"    )) + 
+  labs( title = "Incarcerated Population Over Time By Race",
+        x = "Year", 
+        y = "Population"
+        )
 ```
 
 ### Variable Comparison Chart
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
+The two variables I compared for this chart were total population and the population of those in jail. This created a plot with different points that show the relationship between the two. What I concluded from this chart is that there is a strong relationship between populations around or below 2.5 million people with less than 5,000 people in jail. This would be about 0.2% of the total population being incarcerated which is decently low. There are a few outliers which high populations and upwards of 30,0000 people incarcerated but the majority is in the bottom left corner of the chart. 
 
-The second chart that you will create and include will show how two different (continuous) variables are related to one another. Again, think carefully about what such a comparison means and what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
 
-- You must have clear x and y axis labels
-- The chart needs a clear title 
-- If you choose to add a color encoding (not required), you need a legend for your different color and a clear legend title
+```{r}
+library(ggplot2)
+ggplot(incarceration_trends) +
+  geom_point(mapping = aes(x= total_pop, y = total_jail_pop), labels = scales:: label_number_si()) + 
+  labs(title = "Incarcerated Population to Total Population")
+
+```
+
 
 ### Map
 
-Include a chart. Make sure to describe why you included the chart, and what patterns emerged
+The map I created maps out the total incarcerated population in each state. I created a color scale that ranges from red being the highest to blue being the lowest. The two reddest states, meaning the highest incarcerations, on the map were California and Texas. And I found that there was a a decent amount of states with lower amounts of incarcerations were in the Midwest and the East coast. This could also have to do with total population of each state which would explain why more people were in jail. 
 
-The last chart that you will create and include will show how a variable is distributed geographically. Again, think carefully about what such a comparison means and what you want to communicate to your user (you may have to find relevant trends in the dataset first!). Here are some requirements to help guide your design:
 
-- Your map needs a title
-- Your color scale needs a legend with a clear label
-- Use a map based coordinate system to set the aspect ratio of your map
-- Use a minimalist theme for the map 
+```{r}
+total_per_state <- incarceration_trends %>% group_by(state) %>% filter(year == "2018") %>% 
+  summarize(total_jail = sum(total_jail_pop, na.rm = TRUE))
+
+state_shape <- map_data("state")
+
+state_abbrevs <- data.frame(state.abb, state.name)
+
+total_per_state <- left_join(total_per_state, state_abbrevs, by = c('state' = 'state.abb'))
+
+total_per_state <- total_per_state %>% mutate(region = tolower(state.name))
+
+state_shape <- left_join(state_shape, total_per_state)
+
+ggplot(state_shape) + geom_polygon(
+  mapping = aes(x = long, y = lat, group = group, fill = total_jail),
+) + 
+  coord_map() + labs(title = "2018 Total Jail Population") + 
+  scale_fill_continuous(low = 'blue', high = 'red', labels = scales:: label_number_si())
+```
+
