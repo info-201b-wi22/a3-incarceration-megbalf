@@ -4,7 +4,7 @@ x_values <- seq(1, 3)
 y_values <- seq(1,3)
 
 
-
+library(tidyverse)
 incarceration_time_series <- incarceration_trends %>% 
   select(year, aapi_jail_pop, black_jail_pop, latinx_jail_pop, native_jail_pop, 
          white_jail_pop, other_race_jail_pop, total_jail_pop) %>% 
